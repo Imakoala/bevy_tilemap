@@ -53,6 +53,11 @@ pub(crate) fn tilemap_events(
 
         let capacity = spawned_chunks.len();
         for point in spawned_chunks.into_iter() {
+            if !tilemap.chunks_mut().contains_key(&point) {
+                warn!("Can not get chunk at {}, skipping", &point);
+                continue;
+            }
+
             if tilemap.spawned_chunks().contains(&(point.x, point.y)) {
                 continue;
             } else {
@@ -66,12 +71,7 @@ pub(crate) fn tilemap_events(
             let texture_atlas = tilemap.texture_atlas().clone_weak();
             let pipeline_handle = tilemap.topology().to_pipeline_handle();
             let topology = tilemap.topology();
-            let chunk = if let Some(chunk) = tilemap.chunks_mut().get_mut(&point) {
-                chunk
-            } else {
-                warn!("Can not get chunk at {}, skipping", &point);
-                continue;
-            };
+            let chunk = tilemap.chunks_mut().get_mut(&point).unwrap();
             let mut entities = Vec::with_capacity(capacity);
             for z_order in 0..layers_len {
                 if layers.get(z_order).is_none() {
