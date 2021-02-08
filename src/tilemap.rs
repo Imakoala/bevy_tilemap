@@ -216,6 +216,10 @@ pub struct TilemapLayer {
     #[cfg_attr(feature = "serde", serde(skip))]
     #[cfg(feature = "bevy_rapier2d")]
     pub interaction_groups: InteractionGroups,
+    /// A flag to set whether the tiles are sensors
+    #[cfg_attr(feature = "serde", serde(skip))]
+    #[cfg(feature = "bevy_rapier2d")]
+    pub is_sensor: bool,
 }
 
 impl Default for TilemapLayer {
@@ -224,6 +228,8 @@ impl Default for TilemapLayer {
             kind: LayerKind::Dense,
             #[cfg(feature = "bevy_rapier2d")]
             interaction_groups: InteractionGroups::none(),
+            #[cfg(feature = "bevy_rapier2d")]
+            is_sensor: false,
         }
     }
 }
@@ -865,6 +871,8 @@ impl Tilemap {
             kind,
             #[cfg(feature = "bevy_rapier2d")]
             interaction_groups: InteractionGroups::default(),
+            #[cfg(feature = "bevy_rapier2d")]
+            is_sensor: false,
         };
         if let Some(some_kind) = self.layers.get_mut(z_order) {
             if some_kind.is_some() {

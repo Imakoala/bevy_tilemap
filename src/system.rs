@@ -259,6 +259,9 @@ fn spawn_collisions(
             let collision_groups = layers
                 .get(z_order)
                 .and_then(|layer_opt| layer_opt.and_then(|layer| Some(layer.interaction_groups)));
+            let is_sensor = layers
+                .get(z_order)
+                .and_then(|layer_opt| layer_opt.and_then(|layer| Some(layer.is_sensor)));
             if let Some(collision_groups) = collision_groups {
                 if collision_groups.with_mask(0).0 != 0 {
                     let mut collider = ColliderBuilder::cuboid(
@@ -267,7 +270,7 @@ fn spawn_collisions(
                     );
 
                     collider = collider.collision_groups(collision_groups);
-
+                    collider = collider.sensor(is_sensor.unwrap_or(false));
                     let entity = if let Some(entity) = commands
                         .spawn((
                             RigidBodyBuilder::new_static()
